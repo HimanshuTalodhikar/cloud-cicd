@@ -1,0 +1,85 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Server architecture for Task Manager CI/CD practical
+
+Resources:
+
+  TaskAppSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow SSH, HTTP and backend API access
+      VpcId: vpc-09b3a3c33ddcb1e2f
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 8080
+          ToPort: 8080
+          CidrIp: 0.0.0.0/0
+
+  TaskAppEC2Role:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: TaskAppEC2CodeDeployRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforAWSCodeDeploy
+        - arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
+
+  TaskAppInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - !Ref TaskAppEC2Role
+
+  TaskAppInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      ImageId: ami-0e12ffc2dd465f6e4
+      KeyName: key-pair-cicd
+
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: true
+          DeviceIndex: 0
+          SubnetId: subnet-0c12550efc680eb46
+          GroupSet:
+            - !Ref TaskAppSecurityGroup
+
+      IamInstanceProfile: !Ref TaskAppInstanceProfile
+
+      Tags:
+        - Key: Name
+          Value: task-manager-cfn-server
+
+  TaskAppArtifactBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub task-manager-artifacts-${AWS::AccountId}-${AWS::Region}
+
+  TaskAppCodeDeployApplication:
+    Type: AWS::CodeDeploy::Application
+    Properties:
+      ApplicationName: task-manager-cfn-app
+      ComputePlatform: Server
+
+Outputs:
+
+  InstancePublicDNS:
+    Description: Public DNS of EC2 instance
+    Value: !GetAtt TaskAppInstance.PublicDnsName
+
+  InstanceId:
+    Description: EC2 Instance ID
+    Value: !Ref TaskAppInstance

@@ -1,12 +1,15 @@
 #!/bin/bash
+
 echo "Stopping existing Spring Boot application..."
 
-# Find and kill the Java process running the backend JAR
-PID=$(pgrep -f 'task-management-backend-0.0.1-SNAPSHOT.jar')
+PID=$(pgrep -f 'task-management-backend-0.0.1-SNAPSHOT.jar' || true)
 
 if [ -z "$PID" ]; then
-    echo "No running Spring Boot application found."
+    echo "No running application found. Skipping stop."
 else
     echo "Killing process $PID"
-    kill -9 $PID
+    kill -9 $PID || true
 fi
+
+echo "Stop script completed successfully"
+exit 0

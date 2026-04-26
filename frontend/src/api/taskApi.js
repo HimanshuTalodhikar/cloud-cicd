@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_URL = 'http://13.203.202.32:8080/api/tasks';
+const API_URL = 'http://ec2-52-66-211-46.ap-south-1.compute.amazonaws.com:8080/api/tasks';
+
 
 
 export const getTasks = async () => {

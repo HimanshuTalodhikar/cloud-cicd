@@ -1,0 +1,39 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      java: corretto17
+      nodejs: 18
+  
+  pre_build:
+    commands:
+      - echo "Starting the build process..."
+      - echo "Checking Java and Node versions..."
+      - java -version
+      - node -v
+  
+  build:
+    commands:
+      - echo "Building Backend (Spring Boot)..."
+      - cd backend
+      - mvn clean package -DskipTests
+      - cd ..
+      
+      - echo "Building Frontend (React/Vite)..."
+      - cd frontend
+      - npm install
+      - npm run build
+      - cd ..
+  
+  post_build:
+    commands:
+      - echo "Build completed on `date`"
+
+artifacts:
+  files:
+    - backend/target/task-management-backend-0.0.1-SNAPSHOT.jar
+    - frontend/dist/**/*
+    - appspec.yml
+    - scripts/**/*
+  name: TaskApp-Build-Artifact

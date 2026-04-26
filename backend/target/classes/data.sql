@@ -1,0 +1,5 @@
+INSERT INTO tasks (title, description, status, created_at, updated_at) VALUES ('Set up project repository', 'Initialize Git and create the base folder structure for frontend and backend.', 'COMPLETED', NOW(), NOW()) ON DUPLICATE KEY UPDATE id=id;
+INSERT INTO tasks (title, description, status, created_at, updated_at) VALUES ('Design Database Schema', 'Create the tables and relations required for the Task Management system.', 'COMPLETED', NOW(), NOW()) ON DUPLICATE KEY UPDATE id=id;
+INSERT INTO tasks (title, description, status, created_at, updated_at) VALUES ('Develop REST APIs', 'Build CRUD endpoints for tasks using Spring Boot and Java.', 'PENDING', NOW(), NOW()) ON DUPLICATE KEY UPDATE id=id;
+INSERT INTO tasks (title, description, status, created_at, updated_at) VALUES ('Create Frontend Dashboard', 'Build a responsive React interface for viewing task summaries and lists.', 'PENDING', NOW(), NOW()) ON DUPLICATE KEY UPDATE id=id;
+INSERT INTO tasks (title, description, status, created_at, updated_at) VALUES ('Write Unit Tests', 'Ensure standard edge cases and regular workflows are tested successfully.', 'PENDING', NOW(), NOW()) ON DUPLICATE KEY UPDATE id=id;
